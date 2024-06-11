@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-
+import playSvg from './assets/PlayIcon.svg';
+import tagSvg from './assets/TagNavigator.svg'
 const WheelComponent = ({
   segments,
   segColors,
@@ -8,7 +9,8 @@ const WheelComponent = ({
   primaryColor,
   contrastColor,
   buttonText,
-  isOnlyOnce
+  isOnlyOnce,
+  textColor
 }) => {
   let currentSegment = "";
   let isStarted = false;
@@ -24,8 +26,8 @@ const WheelComponent = ({
   const downTime = segments.length * 1000;
   let spinStart = 0;
   let frames = 0;
-  const centerX = 300;
-  const centerY = 300;
+  const centerX = 350;
+  const centerY = 350;
   useEffect(() => {
     wheelInit();
     setTimeout(() => {
@@ -53,7 +55,7 @@ const WheelComponent = ({
     isStarted = true;
     if (timerHandle === 0) {
       spinStart = new Date().getTime();
-      // maxSpeed = Math.PI / ((segments.length*2) + Math.random())
+      // maxSpeed = Math.PI / ((segments.length * 2) + Math.random())
       maxSpeed = Math.PI / segments.length;
       frames = 0;
       timerHandle = setInterval(onTimerTick, timerDelay);
@@ -87,7 +89,7 @@ const WheelComponent = ({
       }
       if (progress >= 1) finished = true;
     }
-
+    console.log("angleDelta: " + angleDelta)
     angleCurrent += angleDelta;
     while (angleCurrent >= Math.PI * 2) angleCurrent -= Math.PI * 2;
     if (finished) {
@@ -120,14 +122,21 @@ const WheelComponent = ({
     ctx.arc(centerX, centerY, size, lastAngle, angle, false);
     ctx.lineTo(centerX, centerY);
     ctx.closePath();
-    ctx.fillStyle = segColors[key];
+
+    // Create a linear gradient
+    const gradient = ctx.createLinearGradient(centerX - size, centerY, centerX + size, centerY);
+    gradient.addColorStop(0, segColors[key][0]); // Start color of the gradient
+    gradient.addColorStop(1, segColors[key][1]); // End color of the gradient
+
+    // Assign the gradient as fill style
+    ctx.fillStyle = gradient;
     ctx.fill();
     ctx.stroke();
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate((lastAngle + angle) / 2);
-    ctx.fillStyle = contrastColor || "white";
-    ctx.font = "bold 1em proxima-nova";
+    ctx.fillStyle = segColors[key][0] === '#FFFFFF' ? 'black' : "white";
+    ctx.font = "bold 16px Montserrat";
     ctx.fillText(value.substr(0, 21), size / 2 + 20, 0);
     ctx.restore();
   };
@@ -150,66 +159,97 @@ const WheelComponent = ({
 
     // Draw a center circle
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 50, 0, PI2, false);
+    ctx.arc(centerX, centerY, 40, 0, PI2, false);
     ctx.closePath();
-    ctx.fillStyle = primaryColor || "black";
-    ctx.lineWidth = 10;
+    ctx.fillStyle = "#4459CC";
+    // ctx.lineWidth = 10;
     ctx.strokeStyle = contrastColor || "white";
     ctx.fill();
-    ctx.font = "bold 1em proxima-nova";
-    ctx.fillStyle = contrastColor || "white";
-    ctx.textAlign = "center";
-    ctx.fillText(buttonText || "Spin", centerX, centerY + 3);
-    ctx.stroke();
 
-    // Draw outer circle
+    //center circle text
+    // ctx.font = "bold 1em Montserrat";
+    // ctx.fillStyle = contrastColor || "white";
+    // ctx.textAlign = "center";
+    // ctx.fillText(buttonText || "Spin", centerX, centerY + 3);
+
+    //center circle img
+    // ctx.stroke();
+    // const image = new Image();
+    // image.src = playSvg;
+    // image.onload = () => {
+    //   ctx.drawImage(image, centerX - 42, centerY - 35, 80, 80);
+    // };
+
+    // Draw Semi outer circle
     ctx.beginPath();
     ctx.arc(centerX, centerY, size, 0, PI2, false);
     ctx.closePath();
 
     ctx.lineWidth = 10;
-    ctx.strokeStyle = primaryColor || "black";
+    ctx.strokeStyle = "#FDC350";
     ctx.stroke();
+
+    //Draw outer circle
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, size + 15, 0, PI2, false);
+    ctx.closePath();
+
+    ctx.lineWidth = 20;
+    ctx.strokeStyle = "#1028A4";
+    ctx.stroke();
+
   };
 
   const drawNeedle = () => {
     const ctx = canvasContext;
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = contrastColor || "white";
-    ctx.fileStyle = contrastColor || "white";
-    ctx.beginPath();
-    ctx.moveTo(centerX + 20, centerY - 50);
-    ctx.lineTo(centerX - 20, centerY - 50);
-    ctx.lineTo(centerX, centerY - 70);
-    ctx.closePath();
-    ctx.fill();
-    const change = angleCurrent + Math.PI / 2;
+    const change = angleCurrent + Math.PI;
     let i =
       segments.length -
       Math.floor((change / (Math.PI * 2)) * segments.length) -
       1;
     if (i < 0) i = i + segments.length;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = primaryColor || "black";
-    ctx.font = "bold 2.5em proxima-nova";
     currentSegment = segments[i];
+
     isFinished &&
       ctx.fillText(currentSegment, centerX + 10, centerY + size + 50);
   };
+
   const clear = () => {
     const ctx = canvasContext;
     ctx.clearRect(0, 0, 1000, 500);
   };
   return (
-    <canvas
-      id="canvas"
-      width="600"
-      height="600"
-      style={{
-        pointerEvents: isFinished && !isOnlyOnce ? "none" : "auto"
-      }}
-    />
+    <div style={{ position: 'relative' }}>
+      <img
+        src={tagSvg}
+        alt="Tag"
+        style={{
+          position: 'absolute',
+          left: -48,
+          top: '48.5%',
+          transform: 'translateY(-50%)'
+        }}
+      />
+      <img
+        src={playSvg}
+        alt="Tag"
+        style={{
+          position: 'absolute',
+          left: '45.5%',
+          top: '50.5%',
+          transform: 'translateY(-50%)'
+        }}
+      />
+      <canvas
+        id="canvas"
+        width="700"
+        height="700"
+        style={{
+          pointerEvents: isFinished && !isOnlyOnce ? "none" : "auto",
+
+        }}
+      />
+    </div>
   );
 };
 export default WheelComponent;

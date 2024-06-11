@@ -19,21 +19,26 @@ export class App extends Component {
 
   render() {
     const segments = [
-      "I phone 13 pro max",
-      "Bose surround speakers",
-      "Samsung 65-Inch Crystal UHD 4K Flat Smart TV ",
-      "MacBook Air MGN63 14” Display, Apple M1 Chip With 8-Core",
-      "KIA TELLURIDE 2022",
-      "SAMSUNG FRONT LOAD WASHING MACHINE 16KG",
-      "10GRAMS GOLD COIN",
-      "VOUCHER FOR GEORGIA FAMILY TRIP UPTO 4",
-      "AMAZON GIFT VOUCHER WORTH 1000AED",
-      "APPLE AIRPODS PRO",
+      'Better luck next time',
+      '10% subsidy on loan amount',
+      'Noise cancellation earphones worth ₹2,999',
+      'Smart watch worth ₹4,999',
+      'Free visa assistance',
+      'Better luck next time',
+      '3 months Netflix subscription',
+      'Sunglasses worth ₹2,999',
+      'Free guidance Travel bag',
+      '₹1000 off on Air tickets',
+      'Amazon gift card worth ₹500',
+      'Study tablet worth ₹19,999'
     ];
 
     const weelColors = () => {
       let arr = [];
-      let colors = ["#EE4040", "#F0CF50", "#815CD1", "#3DA5E0", "#34A24F"];
+      let colors = [
+        ["#4459CC", "#FF5184"],
+        ["#FFFFFF", "#FFFFFF"],
+      ];;
       segments.forEach((el) => {
         let color = colors.shift();
         arr.push(color);
@@ -62,9 +67,10 @@ export class App extends Component {
           segColors={segColors}
           winningSegment={"8"}
           onFinished={(winner) => onFinished(winner)}
-          primaryColor="orange"
+          primaryColor="#1028A4"
           contrastColor={["white"]}
-          buttonText="Spin"
+          textColor={["white", 'black']}
+          buttonText="Play"
           isOnlyOnce={true}
         />
         {this.state.portal ? <TrPortal /> : null}
